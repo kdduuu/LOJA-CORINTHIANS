@@ -1,0 +1,350 @@
+/* =========================================
+   RESET
+========================================= */
+
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   BODY
+========================================= */
+
+body {
+
+    background-color: #0b0b0b;
+
+    color: white;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================================
+   HERO
+========================================= */
+
+.hero {
+
+    position: relative;
+
+    background-color: #000;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    padding: 18px 40px;
+
+    border-bottom: 1px solid #111;
+}
+
+
+.hero-left {
+
+    max-width: 520px;
+
+    width: 100%;
+}
+
+
+.hero-brand {
+
+    font-size: 14px;
+
+    letter-spacing: 6px;
+
+    text-transform: uppercase;
+
+    color: #ddd;
+
+    margin-bottom: 14px;
+
+    display: block;
+}
+
+
+.mini-title {
+
+    color: #999;
+
+    text-transform: uppercase;
+
+    letter-spacing: 4px;
+
+    margin-bottom: 16px;
+
+    font-size: 14px;
+}
+
+
+.description {
+
+    color: #b3b3b3;
+
+    text-transform: uppercase;
+
+    letter-spacing: 2px;
+
+    font-size: 15px;
+
+    line-height: 1.7;
+
+    max-width: 520px;
+}
+
+
+/* =========================================
+   FORMULÁRIO
+========================================= */
+
+.form-section {
+
+    display: flex;
+
+    justify-content: center;
+
+    margin-top: 80px;
+
+    padding: 20px;
+}
+
+
+form {
+
+    width: 500px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+
+    background-color: #151515;
+
+    padding: 40px;
+
+    border-radius: 24px;
+
+    border: 1px solid #222;
+}
+
+
+form h2 {
+
+    font-size: 30px;
+
+    margin-bottom: 10px;
+}
+
+
+input,
+textarea {
+
+    background-color: #0f0f0f;
+
+    border: 1px solid #333;
+
+    padding: 16px;
+
+    border-radius: 12px;
+
+    color: white;
+
+    font-size: 16px;
+}
+
+
+textarea {
+
+    resize: none;
+
+    height: 120px;
+}
+
+
+input:focus,
+textarea:focus {
+
+    outline: none;
+
+    border: 1px solid #666;
+}
+
+
+/* =========================================
+   BOTÃO FORM
+========================================= */
+
+form button {
+
+    background-color: white;
+
+    color: black;
+
+    border: none;
+
+    padding: 16px;
+
+    border-radius: 12px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+
+form button:hover {
+
+    opacity: 0.8;
+}
+
+
+/* =========================================
+   PRODUTOS
+========================================= */
+
+.products {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+    gap: 30px;
+
+    padding: 80px;
+}
+
+
+/* =========================================
+   CARD
+========================================= */
+
+.card {
+
+    background-color: #151515;
+
+    border: 1px solid #222;
+
+    border-radius: 24px;
+
+    padding: 30px;
+
+    transition: 0.3s;
+}
+
+
+.card:hover {
+
+    transform: translateY(-5px);
+
+    border: 1px solid #444;
+}
+
+
+.card h3 {
+
+    font-size: 24px;
+
+    margin-bottom: 20px;
+
+    line-height: 1.3;
+}
+
+
+.card p {
+
+    color: #999;
+
+    line-height: 1.6;
+
+    margin-bottom: 30px;
+}
+
+
+.card span {
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    display: block;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================
+   BOTÃO EDITAR
+========================================= */
+
+.edit-btn {
+
+    width: 100%;
+
+    background-color: white;
+
+    border: none;
+
+    padding: 14px;
+
+    border-radius: 12px;
+
+    color: black;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    margin-bottom: 12px;
+}
+
+
+.edit-btn:hover {
+
+    opacity: 0.8;
+}
+
+
+/* =========================================
+   BOTÃO DELETAR
+========================================= */
+
+.delete-btn {
+
+    width: 100%;
+
+    background-color: #8b0000;
+
+    border: none;
+
+    padding: 14px;
+
+    border-radius: 12px;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+
+.delete-btn:hover {
+
+    background-color: #b30000;
+}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Corinthians Studio</title>
+
+    <!-- CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <!-- =========================================
+         HERO
+    ========================================== -->
+
+    <header class="hero">
+
+        <div class="hero-left">
+
+            <span class="hero-brand">
+                CORINTHIANS
+            </span>
+
+            <p class="mini-title">
+                Corinthians Studio
+            </p>
+
+            <p class="description">
+
+                Coleção urbana inspirada na cultura paulista,
+                futebol e streetwear premium.
+
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================
+         FORMULÁRIO
+    ========================================== -->
+
+    <section class="form-section">
+
+        <form action="/cadastrar" method="POST">
+
+            <h2>Novo Produto</h2>
+
+            <input
+                type="text"
+                name="nome"
+                placeholder="Nome do produto"
+                required
+            >
+
+            <input
+                type="number"
+                step="0.01"
+                name="preco"
+                placeholder="Preço"
+                required
+            >
+
+            <textarea
+                name="descricao"
+                placeholder="Descrição do produto"
+                required
+            ></textarea>
+
+            <button type="submit">
+
+                Cadastrar Produto
+
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================================
+         PRODUTOS
+    ========================================== -->
+
+    <section class="products">
+
+        {% for produto in produtos %}
+
+        <div class="card">
+
+            <!-- Nome -->
+            <h3>{{ produto[1] }}</h3>
+
+            <!-- Descrição -->
+            <p>{{ produto[3] }}</p>
+
+            <!-- Preço -->
+            <span>
+
+                R$ {{ produto[2] }}
+
+            </span>
+
+
+            <!-- BOTÃO EDITAR -->
+            <a href="/editar/{{ produto[0] }}">
+
+                <button class="edit-btn">
+
+                    Editar
+
+                </button>
+
+            </a>
+
+
+            <!-- BOTÃO DELETAR -->
+            <a href="/deletar/{{ produto[0] }}">
+
+                <button class="delete-btn">
+
+                    Deletar
+
+                </button>
+
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </section>
+
+</body>
+
+</html>
