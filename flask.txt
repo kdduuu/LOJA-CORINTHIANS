@@ -1,0 +1,47 @@
+Como o Flask foi utilizado no projeto:
+
+1. Criação da aplicação Flask:
+- O arquivo principal é `app.py`.
+- O Flask é importado com `from flask import Flask, render_template, request, redirect`.
+- A aplicação é criada com `app = Flask(__name__)`.
+
+2. Estrutura de rotas (páginas/endpoints):
+- Cada função com `@app.route(...)` define uma rota HTTP.
+- A rota `/` mostra a página inicial e lista produtos.
+- A rota `/cadastrar` recebe dados do formulário para inserir um produto no banco de dados.
+- A rota `/deletar/<int:id>` exclui um produto pelo `id`.
+- A rota `/editar/<int:id>` mostra a página de edição e também processa o envio do formulário de edição.
+
+3. Renderização de templates:
+- `render_template('index.html', produtos=produtos)` renderiza a página HTML `templates/index.html` e passa a lista de produtos para o template.
+- `render_template('editar.html', produto=produto)` renderiza o template `templates/editar.html` e passa os dados do produto para edição.
+- Isso significa que Flask liga o código Python aos arquivos HTML na pasta `templates/`.
+
+4. Tratamento de formulários e métodos HTTP:
+- No Flask, `request.form` pega os dados enviados pelo formulário HTML.
+- Para cadastrar, a rota usa `methods=['POST']`, ou seja, recebe somente envios de formulário.
+- A rota de editar aceita `methods=['GET', 'POST']`: 
+  - `GET` exibe o formulário com os dados atuais do produto.
+  - `POST` atualiza o produto no banco quando o formulário é enviado.
+
+5. Redirecionamento:
+- Após cadastrar, deletar ou editar, o código usa `redirect('/')` para voltar para a página inicial.
+- Isso faz o navegador carregar novamente a lista de produtos atualizada.
+
+6. Conexão com o banco de dados MySQL:
+- O projeto usa `mysql.connector` para conectar ao banco MySQL.
+- Em cada rota, ele cria uma conexão com `mysql.connector.connect(...)`, executa SQL e fecha a conexão.
+- No `home()`, ele busca todos os produtos com `SELECT * FROM produtos`.
+- No `cadastrar()`, ele insere um novo produto usando `INSERT INTO produtos (...)`.
+- No `deletar(id)`, ele remove o produto pelo `id` com `DELETE FROM produtos WHERE id = %s`.
+- No `editar(id)`, ele atualiza o produto com `UPDATE produtos SET ... WHERE id = %s`.
+
+7. Execução do servidor:
+- O final do arquivo tem `if __name__ == '__main__': app.run(debug=True)`.
+- Isso inicia o servidor Flask local quando o arquivo `app.py` é executado.
+
+Resumo:
+- O Flask serve como a camada web do projeto.
+- Ele atende URLs, renderiza HTML e recebe dados de formulários.
+- Ele conecta o código Python com o banco de dados MySQL e com os templates HTML.
+- As rotas definem as operações principais: listar, cadastrar, editar e excluir produtos.
