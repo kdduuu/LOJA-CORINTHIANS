@@ -1,193 +1,323 @@
 # =========================================================
 # APP.PY
+# CORINTHIANS ARCHIVE STUDIES
 # =========================================================
 
-# Importações Flask
 from flask import Flask, render_template, request, redirect
-
-# Importação MySQL
 import mysql.connector
+import unicodedata
+import re
 
 
 # =========================================================
-# CRIAÇÃO APP
+# CRIAÇÃO DO APP
 # =========================================================
 
 app = Flask(__name__)
 
 
 # =========================================================
-# HOME
+# CONEXÃO COM O BANCO
+# =========================================================
+
+def conectar_banco():
+    return mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='',
+        database='loja_corinthians'
+    )
+
+
+# =========================================================
+# ORDEM CURATORIAL DAS FAMÍLIAS
+# =========================================================
+
+ORDEM_FAMILIAS = [
+    'PAVILHÃO',
+    'YOKOHAMA',
+    'DEMOCRACIA',
+    '1910',
+    'SCCP STUDIES'
+]
+
+
+# =========================================================
+# FUNÇÕES AUXILIARES
+# =========================================================
+
+def extrair_familia(colecao):
+    if not colecao:
+        return 'SEM COLEÇÃO'
+
+    return colecao.split('/')[0].strip().upper()
+
+
+def gerar_slug(texto):
+    texto = unicodedata.normalize(
+        'NFKD',
+        texto
+    )
+
+    texto = texto.encode(
+        'ascii',
+        'ignore'
+    ).decode('ascii')
+
+    texto = texto.lower()
+
+    texto = re.sub(
+        r'[^a-z0-9]+',
+        '-',
+        texto
+    )
+
+    return texto.strip('-')
+
+
+def organizar_familias(produtos):
+    familias = {}
+
+    for produto in produtos:
+        colecao = produto[4] or 'SEM COLEÇÃO'
+
+        nome_familia = extrair_familia(
+            colecao
+        )
+
+        if nome_familia not in familias:
+            familias[nome_familia] = {
+                'nome': nome_familia,
+                'colecao': colecao,
+                'slug': gerar_slug(nome_familia),
+                'produtos': []
+            }
+
+        familias[nome_familia]['produtos'].append(
+            produto
+        )
+
+    # -----------------------------------------------------
+    # ORDENA AS PEÇAS DENTRO DE CADA FAMÍLIA
+    # -----------------------------------------------------
+
+    for familia in familias.values():
+        familia['produtos'].sort(
+            key=lambda produto: produto[0]
+        )
+
+    # -----------------------------------------------------
+    # ORDEM CURATORIAL DAS FAMÍLIAS
+    # -----------------------------------------------------
+
+    def ordem(familia):
+        nome = familia['nome']
+
+        if nome in ORDEM_FAMILIAS:
+            return (
+                ORDEM_FAMILIAS.index(nome),
+                nome
+            )
+
+        return (
+            len(ORDEM_FAMILIAS),
+            nome
+        )
+
+    return sorted(
+        familias.values(),
+        key=ordem
+    )
+
+
+# =========================================================
+# HOME / ARCHIVE INDEX
 # =========================================================
 
 @app.route('/')
 def home():
-
-    # =============================================
-    # CONEXÃO MYSQL
-    # =============================================
-
-    conexao = mysql.connector.connect(
-
-        host='localhost',
-
-        user='root',
-
-        password='',
-
-        database='loja_corinthians'
-    )
-
-    # Cursor executa SQL
+    conexao = conectar_banco()
     cursor = conexao.cursor()
 
-    # Busca produtos
-    cursor.execute("SELECT * FROM produtos")
+    cursor.execute(
+        """
+        SELECT *
+        FROM produtos
+        ORDER BY id ASC
+        """
+    )
 
-    # Pega todos resultados
     produtos = cursor.fetchall()
 
-    # Fecha conexão
     cursor.close()
-
     conexao.close()
 
-    # Renderiza HTML
+    familias = organizar_familias(
+        produtos
+    )
+
     return render_template(
-
         'index.html',
+        produtos=produtos,
+        familias=familias
+    )
 
+
+# =========================================================
+# PÁGINA INDIVIDUAL DA PEÇA
+# =========================================================
+
+@app.route('/produto/<int:id>')
+def produto(id):
+    conexao = conectar_banco()
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM produtos
+        WHERE id = %s
+        """,
+        (id,)
+    )
+
+    produto = cursor.fetchone()
+
+    cursor.close()
+    conexao.close()
+
+    if produto is None:
+        return redirect('/')
+
+    return render_template(
+        'produto.html',
+        produto=produto
+    )
+
+
+# =========================================================
+# ADMIN
+# =========================================================
+
+@app.route('/admin')
+def admin():
+    conexao = conectar_banco()
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM produtos
+        ORDER BY id ASC
+        """
+    )
+
+    produtos = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return render_template(
+        'admin.html',
         produtos=produtos
     )
 
 
 # =========================================================
-# CADASTRAR PRODUTO
+# CADASTRAR PEÇA
 # =========================================================
 
 @app.route('/cadastrar', methods=['POST'])
-
 def cadastrar():
-
-    # Dados formulário
     nome = request.form['nome']
-
     preco = request.form['preco']
-
     descricao = request.form['descricao']
 
-    # =============================================
-    # CONEXÃO MYSQL
-    # =============================================
-
-    conexao = mysql.connector.connect(
-
-        host='localhost',
-
-        user='root',
-
-        password='',
-
-        database='loja_corinthians'
+    colecao = request.form.get(
+        'colecao',
+        ''
     )
 
+    temporada = request.form.get(
+        'temporada',
+        ''
+    )
+
+    categoria = request.form.get(
+        'categoria',
+        ''
+    )
+
+    tags = request.form.get(
+        'tags',
+        ''
+    )
+
+    imagem = request.form.get(
+        'imagem',
+        ''
+    )
+
+    conexao = conectar_banco()
     cursor = conexao.cursor()
 
-    # SQL INSERT
     sql = """
-
-    INSERT INTO produtos (nome, preco, descricao)
-
-    VALUES (%s, %s, %s)
-
+        INSERT INTO produtos (
+            nome,
+            preco,
+            descricao,
+            colecao,
+            temporada,
+            categoria,
+            tags,
+            imagem
+        )
+        VALUES (
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s
+        )
     """
 
-    # Executa SQL
+    valores = (
+        nome,
+        preco,
+        descricao,
+        colecao,
+        temporada,
+        categoria,
+        tags,
+        imagem
+    )
+
     cursor.execute(
-
         sql,
-
-        (nome, preco, descricao)
+        valores
     )
 
-    # Salva no banco
     conexao.commit()
 
-    # Fecha conexão
     cursor.close()
-
     conexao.close()
 
-    # Volta para home
-    return redirect('/')
+    return redirect('/admin')
 
 
 # =========================================================
-# DELETAR PRODUTO
+# EDITAR PEÇA
 # =========================================================
 
-@app.route('/deletar/<int:id>')
-
-def deletar(id):
-
-    # =============================================
-    # CONEXÃO MYSQL
-    # =============================================
-
-    conexao = mysql.connector.connect(
-
-        host='localhost',
-
-        user='root',
-
-        password='',
-
-        database='loja_corinthians'
-    )
-
-    cursor = conexao.cursor()
-
-    # SQL DELETE
-    sql = "DELETE FROM produtos WHERE id = %s"
-
-    # Executa SQL
-    cursor.execute(sql, (id,))
-
-    # Salva alteração
-    conexao.commit()
-
-    # Fecha conexão
-    cursor.close()
-
-    conexao.close()
-
-    # Redireciona
-    return redirect('/')
-
-
-# =========================================================
-# EDITAR PRODUTO
-# =========================================================
-
-@app.route('/editar/<int:id>', methods=['GET', 'POST'])
-
+@app.route(
+    '/editar/<int:id>',
+    methods=['GET', 'POST']
+)
 def editar(id):
-
-    # =============================================
-    # CONEXÃO MYSQL
-    # =============================================
-
-    conexao = mysql.connector.connect(
-
-        host='localhost',
-
-        user='root',
-
-        password='',
-
-        database='loja_corinthians'
-    )
-
+    conexao = conectar_banco()
     cursor = conexao.cursor()
 
     # =====================================================
@@ -195,67 +325,126 @@ def editar(id):
     # =====================================================
 
     if request.method == 'POST':
-
-        # Dados formulário
         nome = request.form['nome']
-
         preco = request.form['preco']
-
         descricao = request.form['descricao']
 
-        # SQL UPDATE
-        sql = """
-
-        UPDATE produtos
-
-        SET nome = %s,
-            preco = %s,
-            descricao = %s
-
-        WHERE id = %s
-
-        """
-
-        # Executa SQL
-        cursor.execute(
-
-            sql,
-
-            (nome, preco, descricao, id)
+        colecao = request.form.get(
+            'colecao',
+            ''
         )
 
-        # Salva alterações
+        temporada = request.form.get(
+            'temporada',
+            ''
+        )
+
+        categoria = request.form.get(
+            'categoria',
+            ''
+        )
+
+        tags = request.form.get(
+            'tags',
+            ''
+        )
+
+        imagem = request.form.get(
+            'imagem',
+            ''
+        )
+
+        sql = """
+            UPDATE produtos
+            SET
+                nome = %s,
+                preco = %s,
+                descricao = %s,
+                colecao = %s,
+                temporada = %s,
+                categoria = %s,
+                tags = %s,
+                imagem = %s
+            WHERE id = %s
+        """
+
+        valores = (
+            nome,
+            preco,
+            descricao,
+            colecao,
+            temporada,
+            categoria,
+            tags,
+            imagem,
+            id
+        )
+
+        cursor.execute(
+            sql,
+            valores
+        )
+
         conexao.commit()
 
-        # Fecha conexão
         cursor.close()
-
         conexao.close()
 
-        # Redireciona
-        return redirect('/')
-
+        return redirect('/admin')
 
     # =====================================================
     # GET
     # =====================================================
 
-    sql = "SELECT * FROM produtos WHERE id = %s"
-
-    cursor.execute(sql, (id,))
+    cursor.execute(
+        """
+        SELECT *
+        FROM produtos
+        WHERE id = %s
+        """,
+        (id,)
+    )
 
     produto = cursor.fetchone()
 
     cursor.close()
-
     conexao.close()
 
+    if produto is None:
+        return redirect('/admin')
+
     return render_template(
-
         'editar.html',
-
         produto=produto
     )
+
+
+# =========================================================
+# DELETAR PEÇA
+# =========================================================
+
+@app.route(
+    '/deletar/<int:id>',
+    methods=['POST']
+)
+def deletar(id):
+    conexao = conectar_banco()
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        """
+        DELETE FROM produtos
+        WHERE id = %s
+        """,
+        (id,)
+    )
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return redirect('/admin')
 
 
 # =========================================================
@@ -263,5 +452,6 @@ def editar(id):
 # =========================================================
 
 if __name__ == '__main__':
-
-    app.run(debug=True)
+    app.run(
+        debug=True
+    )

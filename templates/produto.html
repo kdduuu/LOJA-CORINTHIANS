@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ produto[1] }} / Corinthians Archive Studies
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+
+<body class="product-page">
+
+
+    <!-- HEADER -->
+
+    <header class="product-header">
+
+        <a href="/#archive">
+            ← ARCHIVE
+        </a>
+
+        <span>
+            CORINTHIANS ARCHIVE STUDIES
+        </span>
+
+        <span>
+            REF. {{ "%03d"|format(produto[0]) }}
+        </span>
+
+    </header>
+
+
+
+    <!-- ARCHIVE ENTRY -->
+
+    <main class="product-entry">
+
+
+        <!-- INDEX -->
+
+        <div class="product-entry-index">
+
+            <span>
+                ENTRY
+            </span>
+
+            <strong>
+                {{ "%03d"|format(produto[0]) }}
+            </strong>
+
+        </div>
+
+
+
+        <!-- PLATE -->
+
+        <section class="product-plate">
+
+
+            <div class="product-plate-meta">
+
+                <span>
+                    ARCHIVE OBJECT
+                </span>
+
+                <span>
+                    {{ produto[5] or 'STUDY / N.A.' }}
+                </span>
+
+            </div>
+
+
+            <div class="product-image">
+
+
+                {% if produto[8] %}
+
+                <img
+                    src="{{ url_for('static', filename='images/' ~ produto[8]) }}"
+                    alt="{{ produto[1] }}"
+                >
+
+                {% else %}
+
+                <div class="product-image-empty">
+
+                    <span>
+                        IMAGE
+                    </span>
+
+                    <span>
+                        NOT ARCHIVED
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+            <div class="product-caption">
+
+                <span>
+                    CORINTHIANS ARCHIVE STUDIES
+                </span>
+
+                <span>
+                    REF. {{ "%03d"|format(produto[0]) }}
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- DOCUMENT -->
+
+        <section class="product-document">
+
+
+            <div class="product-document-meta">
+
+                <span>
+                    {{ produto[5] or 'STUDY / N.A.' }}
+                </span>
+
+                <span>
+                    {{ produto[6] or 'ARCHIVE OBJECT' }}
+                </span>
+
+            </div>
+
+
+
+            <h1>
+                {{ produto[1] }}
+            </h1>
+
+
+
+            <p class="product-description">
+                {{ produto[3] }}
+            </p>
+
+
+
+            <dl class="product-details">
+
+
+                <div>
+
+                    <dt>
+                        COLLECTION
+                    </dt>
+
+                    <dd>
+                        {{ produto[4] or '—' }}
+                    </dd>
+
+                </div>
+
+
+                <div>
+
+                    <dt>
+                        SEASON
+                    </dt>
+
+                    <dd>
+                        {{ produto[5] or '—' }}
+                    </dd>
+
+                </div>
+
+
+                <div>
+
+                    <dt>
+                        CATEGORY
+                    </dt>
+
+                    <dd>
+                        {{ produto[6] or '—' }}
+                    </dd>
+
+                </div>
+
+
+                <div>
+
+                    <dt>
+                        INDEX TAGS
+                    </dt>
+
+                    <dd>
+                        {{ produto[7] or '—' }}
+                    </dd>
+
+                </div>
+
+
+                <div>
+
+                    <dt>
+                        VALUE
+                    </dt>
+
+                    <dd>
+                        R$ {{ produto[2] }}
+                    </dd>
+
+                </div>
+
+
+            </dl>
+
+
+
+            <div class="product-project-note">
+
+                <span>
+                    PROJECT NOTE
+                </span>
+
+                <p>
+                    INDEPENDENT CONCEPTUAL FASHION STUDY.
+                    NOT OFFICIAL CORINTHIANS MERCHANDISE.
+                </p>
+
+            </div>
+
+
+
+            <a
+                href="/#archive"
+                class="product-return"
+            >
+                ← RETURN TO ARCHIVE
+            </a>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!--
+        FUTURE RELATED ARCHIVE
+
+        Esta seção só será exibida quando o backend
+        fornecer a variável "relacionados".
+
+        Depois o ML preencherá essa lista.
+    -->
+
+    {% if relacionados %}
+
+    <section class="related-archive">
+
+
+        <div class="section-heading">
+
+            <span>
+                RELATED ARCHIVE
+            </span>
+
+            <span>
+                MACHINE SELECTED
+            </span>
+
+        </div>
+
+
+        <div class="related-grid">
+
+
+            {% for relacionado in relacionados %}
+
+            <article class="related-entry">
+
+
+                <a
+                    href="/produto/{{ relacionado[0] }}"
+                    class="related-image"
+                >
+
+                    {% if relacionado[8] %}
+
+                    <img
+                        src="{{ url_for('static', filename='images/' ~ relacionado[8]) }}"
+                        alt="{{ relacionado[1] }}"
+                    >
+
+                    {% endif %}
+
+                </a>
+
+
+                <div class="related-meta">
+
+                    <span>
+                        REF. {{ "%03d"|format(relacionado[0]) }}
+                    </span>
+
+                    <span>
+                        {{ relacionado[6] or 'OBJECT' }}
+                    </span>
+
+                </div>
+
+
+                <h2>
+
+                    <a href="/produto/{{ relacionado[0] }}">
+                        {{ relacionado[1] }}
+                    </a>
+
+                </h2>
+
+
+            </article>
+
+            {% endfor %}
+
+
+        </div>
+
+
+    </section>
+
+    {% endif %}
+
+
+
+    <!-- FOOTER -->
+
+    <footer class="site-footer">
+
+        <span>
+            CORINTHIANS ARCHIVE STUDIES
+        </span>
+
+        <span>
+            ARCHIVE ENTRY /
+            {{ "%03d"|format(produto[0]) }}
+        </span>
+
+        <span>
+            INDEPENDENT PROJECT / 2026
+        </span>
+
+    </footer>
+
+
+</body>
+
+</html>

@@ -2,7 +2,6 @@
 <html lang="pt-br">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,140 +9,886 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Corinthians Studio</title>
+    <title>Corinthians Archive Studies</title>
 
-    <!-- CSS -->
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
-
 </head>
 
 <body>
 
-    <!-- =========================================
-         HERO
-    ========================================== -->
 
-    <header class="hero">
+    <!-- HEADER -->
 
-        <div class="hero-left">
+    <header class="site-header">
 
-            <span class="hero-brand">
-                CORINTHIANS
-            </span>
+        <a href="/" class="site-brand">
 
-            <p class="mini-title">
-                Corinthians Studio
-            </p>
+            <span>CORINTHIANS</span>
 
-            <p class="description">
+            <small>
+                ARCHIVE STUDIES / 001
+            </small>
 
-                Coleção urbana inspirada na cultura paulista,
-                futebol e streetwear premium.
+        </a>
 
-            </p>
 
-        </div>
+        <nav class="site-nav">
+
+            <a href="#archive">
+                ARCHIVE
+            </a>
+
+            <a href="#about">
+                ABOUT
+            </a>
+
+        </nav>
+
+
+        <span class="site-date">
+            SÃO PAULO / 2026
+        </span>
 
     </header>
 
 
-    <!-- =========================================
-         FORMULÁRIO
-    ========================================== -->
 
-    <section class="form-section">
+    <main>
 
-        <form action="/cadastrar" method="POST">
 
-            <h2>Novo Produto</h2>
+        <!-- HERO -->
 
-            <input
-                type="text"
-                name="nome"
-                placeholder="Nome do produto"
-                required
+        <section class="hero">
+
+
+            <div class="hero-index">
+
+                <span>
+                    STUDY / 001
+                </span>
+
+                <span>
+                    INDEPENDENT FASHION ARCHIVE
+                </span>
+
+            </div>
+
+
+            <div class="hero-content">
+
+
+                <h1>
+                    CORINTHIANS<br>
+                    ARCHIVE STUDIES
+                </h1>
+
+
+                <div class="hero-copy">
+
+                    <span class="hero-copy-label">
+                        PROJECT
+                    </span>
+
+
+                    <p>
+                        A CONCEPTUAL STUDY OF CLOTHING,
+                        IDENTITY, MEMORY AND VISUAL CULTURE
+                        THROUGH CORINTHIANS.
+                    </p>
+
+
+                    <small>
+                        NOT OFFICIAL /
+                        INDEPENDENT PROJECT
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="hero-status">
+
+
+                <div>
+                    <span>COLLECTIONS</span>
+
+                    <strong>
+                        {{ familias|length if familias else 0 }}
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>ARCHIVE OBJECTS</span>
+
+                    <strong>
+                        {{ produtos|length }}
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>LOCATION</span>
+
+                    <strong>
+                        SÃO PAULO
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>EDITION</span>
+
+                    <strong>
+                        001 / 2026
+                    </strong>
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ARCHIVE -->
+
+        <section
+            class="archive"
+            id="archive"
+        >
+
+
+            <div class="section-heading">
+
+                <span>
+                    ARCHIVE INDEX
+                </span>
+
+                <span>
+                    {{ produtos|length }} OBJECTS
+                </span>
+
+            </div>
+
+
+
+            {% if familias %}
+
+
+            <!-- COLLECTION INDEX -->
+
+            <nav class="family-navigation">
+
+
+                <div class="family-navigation-inner">
+
+
+                    <span class="family-navigation-label">
+                        COLLECTIONS
+                    </span>
+
+
+                    <div class="family-navigation-links">
+
+
+                        {% for familia in familias %}
+
+
+                        <a href="#{{ familia.slug }}">
+
+                            <span>
+                                {{ "%02d"|format(loop.index) }}
+                            </span>
+
+                            {{ familia.nome }}
+
+                        </a>
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+                </div>
+
+
+            </nav>
+
+
+
+            <!-- COLLECTIONS -->
+
+            <div class="archive-families">
+
+
+                {% for familia in familias %}
+
+
+                <section
+                    class="archive-family"
+                    id="{{ familia.slug }}"
+                >
+
+
+                    <!-- COLLECTION HEADER -->
+
+                    <header class="family-header">
+
+
+                        <div class="family-header-inner">
+
+
+                            <div class="family-number">
+
+                                {{ "%02d"|format(loop.index) }}
+
+                            </div>
+
+
+                            <div class="family-title">
+
+                                <span>
+                                    COLLECTION
+                                </span>
+
+
+                                <h2>
+                                    {{ familia.nome }}
+                                </h2>
+
+
+                                <p class="family-note">
+
+                                    {% set nome_familia = familia.nome|upper %}
+
+
+                                    {% if 'PAVILHÃO' in nome_familia %}
+
+                                        TERRITORY / URBAN TENSION / SUPPORTER CULTURE
+
+
+                                    {% elif 'YOKOHAMA' in nome_familia %}
+
+                                        DISTANCE / 2012 / MEMORY OF VICTORY
+
+
+                                    {% elif 'DEMOCRACIA' in nome_familia %}
+
+                                        VOICE / PEOPLE / COLLECTIVE PRESENCE
+
+
+                                    {% elif nome_familia == '1910' %}
+
+                                        ORIGIN / TRADITION / HISTORICAL MEMORY
+
+
+                                    {% elif 'SCCP' in nome_familia %}
+
+                                        WHITE STUDIES / ARCHIVE / MEMORY IN MOTION
+
+
+                                    {% else %}
+
+                                        ARCHIVE FAMILY / STUDY
+
+                                    {% endif %}
+
+                                </p>
+
+
+                            </div>
+
+
+                            <div class="family-count">
+
+                                {{ familia.produtos|length }}
+
+                                {% if familia.produtos|length == 1 %}
+
+                                    OBJECT
+
+                                {% else %}
+
+                                    OBJECTS
+
+                                {% endif %}
+
+                            </div>
+
+
+                        </div>
+
+
+                    </header>
+
+
+
+                    <!-- OBJECTS -->
+
+                    <div class="family-objects">
+
+
+                        {% for produto in familia.produtos %}
+
+
+                        <article class="archive-entry">
+
+
+                            <!-- INDEX -->
+
+                            <div class="archive-entry-index">
+
+                                {{ "%03d"|format(loop.index) }}
+
+                            </div>
+
+
+
+                            <!-- PLATE -->
+
+                            <div class="archive-plate">
+
+
+                                <a
+                                    href="/produto/{{ produto[0] }}"
+                                    class="archive-image"
+                                >
+
+                                    {% if produto[8] %}
+
+                                    <img
+                                        src="{{ url_for('static', filename='images/' ~ produto[8]) }}"
+                                        alt="{{ produto[1] }}"
+                                    >
+
+                                    {% else %}
+
+                                    <div class="archive-image-empty">
+
+                                        <span>
+                                            IMAGE
+                                        </span>
+
+                                        <span>
+                                            NOT ARCHIVED
+                                        </span>
+
+                                    </div>
+
+                                    {% endif %}
+
+                                </a>
+
+
+                                <div class="archive-caption">
+
+                                    <span>
+                                        CORINTHIANS ARCHIVE STUDIES
+                                    </span>
+
+                                    <span>
+                                        REF. {{ "%03d"|format(produto[0]) }}
+                                    </span>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <!-- DOCUMENT -->
+
+                            <div class="archive-document">
+
+
+                                <div class="archive-document-top">
+
+                                    <span>
+                                        {{ produto[5] or 'STUDY / N.A.' }}
+                                    </span>
+
+                                    <span>
+                                        {{ produto[6] or 'ARCHIVE OBJECT' }}
+                                    </span>
+
+                                </div>
+
+
+                                <h3>
+
+                                    <a href="/produto/{{ produto[0] }}">
+
+                                        {{ produto[1] }}
+
+                                    </a>
+
+                                </h3>
+
+
+                                <p>
+                                    {{ produto[3] }}
+                                </p>
+
+
+                                <dl class="archive-data">
+
+
+                                    <div>
+
+                                        <dt>
+                                            COLLECTION
+                                        </dt>
+
+                                        <dd>
+                                            {{ produto[4] or '—' }}
+                                        </dd>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <dt>
+                                            CATEGORY
+                                        </dt>
+
+                                        <dd>
+                                            {{ produto[6] or '—' }}
+                                        </dd>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <dt>
+                                            VALUE
+                                        </dt>
+
+                                        <dd>
+                                            R$ {{ produto[2] }}
+                                        </dd>
+
+                                    </div>
+
+
+                                </dl>
+
+
+                                <a
+                                    href="/produto/{{ produto[0] }}"
+                                    class="archive-open"
+                                >
+                                    OPEN ENTRY →
+                                </a>
+
+
+                            </div>
+
+
+                        </article>
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+                </section>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+            {% else %}
+
+
+            <div class="archive-empty">
+
+                <span>
+                    000
+                </span>
+
+
+                <div>
+
+                    <strong>
+                        ARCHIVE CURRENTLY EMPTY
+                    </strong>
+
+                    <p>
+                        OBJECTS WILL BE INDEXED
+                        AS THE STUDY DEVELOPS.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% endif %}
+
+
+        </section>
+
+
+
+        <!-- ABOUT -->
+
+        <section
+            class="about"
+            id="about"
+        >
+
+
+            <div class="section-heading">
+
+                <span>
+                    ABOUT THE STUDY
+                </span>
+
+                <span>
+                    001 / 2026
+                </span>
+
+            </div>
+
+
+
+            <div class="about-grid">
+
+
+                <!-- MANIFESTO -->
+
+                <div class="about-main">
+
+                    <p class="about-statement">
+
+                        AN INDEPENDENT FASHION STUDY
+                        EXPLORING CORINTHIANS BEYOND
+                        SPORTSWEAR — THROUGH CLOTHING,
+                        MEMORY, SÃO PAULO AND VISUAL CULTURE.
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- DIRECTION + SOUND -->
+
+                <aside class="about-side">
+
+
+                    <div class="about-direction">
+
+                        <span>
+                            DIRECTION
+                        </span>
+
+                        <p>
+                            ARCHIVE<br>
+                            EDITORIAL<br>
+                            EXPERIMENTAL
+                        </p>
+
+                    </div>
+
+
+
+                    <div class="about-sound">
+
+
+                        <div class="about-sound-head">
+
+                            <span>
+                                SELECTED LISTENING / 001
+                            </span>
+
+                            <span>
+                                00:36
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="about-sound-object">
+
+
+                            <div class="about-sound-cover">
+
+                                <img
+                                    src="{{ url_for('static', filename='images/sassy-cover.png') }}"
+                                    alt="SASSY — Joanne Robertson / Dean Blunt"
+                                >
+
+                            </div>
+
+
+                            <div class="about-sound-info">
+
+                                <span>
+                                    SOUND OBJECT / 001
+                                </span>
+
+                                <h3>
+                                    SASSY
+                                </h3>
+
+                                <p>
+                                    JOANNE ROBERTSON<br>
+                                    / DEAN BLUNT
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="about-sound-controls">
+
+
+                            <button
+                                type="button"
+                                class="sound-play"
+                                id="sound-play"
+                                aria-label="Play SASSY intro"
+                            >
+                                ▶
+                            </button>
+
+
+                            <div class="sound-control-body">
+
+
+                                <div
+                                    class="sound-timeline"
+                                    id="sound-timeline"
+                                >
+
+                                    <div
+                                        class="sound-progress"
+                                        id="sound-progress"
+                                    ></div>
+
+                                </div>
+
+
+                                <div class="sound-time">
+
+                                    <span id="sound-current">
+                                        0:00
+                                    </span>
+
+                                    <span>
+                                        0:36
+                                    </span>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="about-sound-footer">
+
+                            <span>
+                                INTRO / ARCHIVE AUDIO
+                            </span>
+
+                            <a
+                                href="https://open.spotify.com/track/4elitGMjD5pJEoddnEFbDK"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                FULL TRACK ↗
+                            </a>
+
+                        </div>
+
+
+                    </div>
+
+
+                </aside>
+
+
+            </div>
+
+
+
+            <audio
+                id="sassy-audio"
+                preload="metadata"
             >
 
-            <input
-                type="number"
-                step="0.01"
-                name="preco"
-                placeholder="Preço"
-                required
-            >
+                <source
+                    src="{{ url_for('static', filename='audio/sassy-intro.mp3') }}"
+                    type="audio/mpeg"
+                >
 
-            <textarea
-                name="descricao"
-                placeholder="Descrição do produto"
-                required
-            ></textarea>
-
-            <button type="submit">
-
-                Cadastrar Produto
-
-            </button>
-
-        </form>
-
-    </section>
+            </audio>
 
 
-    <!-- =========================================
-         PRODUTOS
-    ========================================== -->
-
-    <section class="products">
-
-        {% for produto in produtos %}
-
-        <div class="card">
-
-            <!-- Nome -->
-            <h3>{{ produto[1] }}</h3>
-
-            <!-- Descrição -->
-            <p>{{ produto[3] }}</p>
-
-            <!-- Preço -->
-            <span>
-
-                R$ {{ produto[2] }}
-
-            </span>
+        </section>
 
 
-            <!-- BOTÃO EDITAR -->
-            <a href="/editar/{{ produto[0] }}">
-
-                <button class="edit-btn">
-
-                    Editar
-
-                </button>
-
-            </a>
+    </main>
 
 
-            <!-- BOTÃO DELETAR -->
-            <a href="/deletar/{{ produto[0] }}">
 
-                <button class="delete-btn">
+    <!-- FOOTER -->
 
-                    Deletar
+    <footer class="site-footer">
 
-                </button>
+        <span>
+            CORINTHIANS ARCHIVE STUDIES
+        </span>
 
-            </a>
+        <span>
+            END OF ARCHIVE / 001
+        </span>
 
-        </div>
+        <span>
+            INDEPENDENT PROJECT / 2026
+        </span>
 
-        {% endfor %}
+    </footer>
 
-    </section>
+
+
+    <!-- PLAYER -->
+
+    <script>
+
+        const audio = document.getElementById('sassy-audio');
+        const playButton = document.getElementById('sound-play');
+        const progress = document.getElementById('sound-progress');
+        const currentTime = document.getElementById('sound-current');
+        const timeline = document.getElementById('sound-timeline');
+
+        const INTRO_DURATION = 36;
+
+        audio.volume = 0.28;
+
+
+        function formatTime(seconds) {
+
+            const minutes = Math.floor(seconds / 60);
+
+            const secs = Math
+                .floor(seconds % 60)
+                .toString()
+                .padStart(2, '0');
+
+            return `${minutes}:${secs}`;
+
+        }
+
+
+        function resetPlayer() {
+
+            audio.pause();
+            audio.currentTime = 0;
+
+            playButton.textContent = '▶';
+            playButton.classList.remove('is-playing');
+
+            progress.style.width = '0%';
+            currentTime.textContent = '0:00';
+
+        }
+
+
+        playButton.addEventListener('click', () => {
+
+            if (audio.paused) {
+
+                audio.play();
+
+                playButton.textContent = 'Ⅱ';
+                playButton.classList.add('is-playing');
+
+            } else {
+
+                audio.pause();
+
+                playButton.textContent = '▶';
+                playButton.classList.remove('is-playing');
+
+            }
+
+        });
+
+
+        audio.addEventListener('timeupdate', () => {
+
+            if (audio.currentTime >= INTRO_DURATION) {
+
+                resetPlayer();
+
+                return;
+
+            }
+
+            const percentage =
+                (audio.currentTime / INTRO_DURATION) * 100;
+
+            progress.style.width =
+                `${Math.min(percentage, 100)}%`;
+
+            currentTime.textContent =
+                formatTime(audio.currentTime);
+
+        });
+
+
+        audio.addEventListener('ended', resetPlayer);
+
+
+        timeline.addEventListener('click', event => {
+
+            const rect =
+                timeline.getBoundingClientRect();
+
+            const position =
+                (event.clientX - rect.left) /
+                rect.width;
+
+            audio.currentTime =
+                Math.max(
+                    0,
+                    Math.min(
+                        position * INTRO_DURATION,
+                        INTRO_DURATION - 0.1
+                    )
+                );
+
+        });
+
+    </script>
+
 
 </body>
 

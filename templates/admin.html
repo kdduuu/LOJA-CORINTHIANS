@@ -11,7 +11,7 @@
     >
 
     <title>
-        Edit {{ produto[1] }} / Archive Management
+        Archive Management / Corinthians Archive Studies
     </title>
 
     <link
@@ -31,8 +31,8 @@
 
     <header class="product-nav">
 
-        <a href="/admin">
-            ← MANAGEMENT
+        <a href="/">
+            ← PUBLIC ARCHIVE
         </a>
 
         <span>
@@ -40,7 +40,7 @@
         </span>
 
         <span>
-            REF. {{ "%03d"|format(produto[0]) }}
+            MANAGEMENT / 001
         </span>
 
     </header>
@@ -54,12 +54,12 @@
     <section class="admin-intro">
 
         <span>
-            ARCHIVE MANAGEMENT / EDIT OBJECT
+            PRIVATE ARCHIVE / MANAGEMENT INTERFACE
         </span>
 
         <h1>
-            EDIT<br>
-            ENTRY
+            ARCHIVE<br>
+            MANAGEMENT
         </h1>
 
     </section>
@@ -67,7 +67,180 @@
 
 
     <!-- =====================================================
-         EDIT
+         INDEXED OBJECTS
+    ====================================================== -->
+
+    <section class="admin-section">
+
+
+        <div class="section-heading">
+
+            <span>
+                INDEXED OBJECTS
+            </span>
+
+            <span>
+                {{ produtos|length }} OBJECTS
+            </span>
+
+        </div>
+
+
+
+        <div class="admin-list">
+
+
+            {% for produto in produtos %}
+
+
+            <article class="admin-row">
+
+
+                <!-- REF -->
+
+                <div class="admin-object">
+
+                    <span>
+                        REF.
+                    </span>
+
+                    <strong>
+                        {{ "%03d"|format(produto[0]) }}
+                    </strong>
+
+                </div>
+
+
+
+                <!-- OBJECT -->
+
+                <div class="admin-object">
+
+                    <strong>
+                        {{ produto[1] }}
+                    </strong>
+
+                    <span>
+                        {{ produto[4] or 'UNCATEGORIZED COLLECTION' }}
+                    </span>
+
+                </div>
+
+
+
+                <!-- STUDY -->
+
+                <div class="admin-object">
+
+                    <span>
+                        STUDY
+                    </span>
+
+                    <strong>
+                        {{ produto[5] or '—' }}
+                    </strong>
+
+                </div>
+
+
+
+                <!-- CATEGORY -->
+
+                <div class="admin-object">
+
+                    <span>
+                        CATEGORY
+                    </span>
+
+                    <strong>
+                        {{ produto[6] or '—' }}
+                    </strong>
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="admin-actions">
+
+
+                    <a
+                        href="/produto/{{ produto[0] }}"
+                        target="_blank"
+                    >
+                        VIEW
+                    </a>
+
+
+                    <a href="/editar/{{ produto[0] }}">
+                        EDIT
+                    </a>
+
+
+                    <form
+                        action="/deletar/{{ produto[0] }}"
+                        method="POST"
+                        onsubmit="return confirm('Remove this archive object?');"
+                    >
+
+                        <button
+                            type="submit"
+                            class="admin-delete"
+                        >
+                            REMOVE
+                        </button>
+
+                    </form>
+
+
+                </div>
+
+
+            </article>
+
+
+            {% else %}
+
+
+            <article class="admin-row">
+
+                <div class="admin-object">
+
+                    <span>
+                        000
+                    </span>
+
+                </div>
+
+
+                <div class="admin-object">
+
+                    <strong>
+                        ARCHIVE EMPTY
+                    </strong>
+
+                    <span>
+                        NO OBJECTS CURRENTLY INDEXED
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         REGISTER OBJECT
     ====================================================== -->
 
     <section class="register">
@@ -76,11 +249,11 @@
         <div class="section-heading">
 
             <span>
-                OBJECT DATA
+                NEW ARCHIVE OBJECT
             </span>
 
             <span>
-                REF. {{ "%03d"|format(produto[0]) }}
+                INDEX / NEXT
             </span>
 
         </div>
@@ -90,23 +263,24 @@
         <div class="register-layout">
 
 
-            <!-- DOCUMENTATION -->
+            <!-- TEXT -->
 
             <div class="register-copy">
 
                 <span>
-                    EDIT / {{ "%03d"|format(produto[0]) }}
+                    ADD / OBJECT
                 </span>
 
                 <h2>
+                    NEW<br>
                     ARCHIVE<br>
-                    OBJECT
+                    ENTRY
                 </h2>
 
                 <p>
-                    EDIT THE DOCUMENTATION ATTACHED TO THIS
-                    ARCHIVE OBJECT. CHANGES WILL BE REFLECTED
-                    THROUGHOUT THE PUBLIC ARCHIVE.
+                    REGISTER A NEW OBJECT IN THE ARCHIVE.
+                    IMAGES MUST ALREADY EXIST INSIDE THE
+                    STATIC IMAGE DIRECTORY.
                 </p>
 
             </div>
@@ -115,7 +289,10 @@
 
             <!-- FORM -->
 
-            <form method="POST">
+            <form
+                action="/cadastrar"
+                method="POST"
+            >
 
 
                 <div class="field">
@@ -127,7 +304,7 @@
                     <input
                         type="text"
                         name="nome"
-                        value="{{ produto[1] }}"
+                        placeholder="SCCP STUDY 04"
                         required
                     >
 
@@ -145,7 +322,7 @@
                         type="number"
                         step="0.01"
                         name="preco"
-                        value="{{ produto[2] }}"
+                        placeholder="0.00"
                         required
                     >
 
@@ -161,8 +338,9 @@
 
                     <textarea
                         name="descricao"
+                        placeholder="EDITORIAL DESCRIPTION"
                         required
-                    >{{ produto[3] }}</textarea>
+                    ></textarea>
 
                 </div>
 
@@ -177,7 +355,6 @@
                     <input
                         type="text"
                         name="colecao"
-                        value="{{ produto[4] or '' }}"
                         placeholder="SCCP STUDIES / SÃO PAULO"
                     >
 
@@ -194,8 +371,7 @@
                     <input
                         type="text"
                         name="temporada"
-                        value="{{ produto[5] or '' }}"
-                        placeholder="STUDY 001"
+                        placeholder="STUDY 004"
                     >
 
                 </div>
@@ -211,7 +387,6 @@
                     <input
                         type="text"
                         name="categoria"
-                        value="{{ produto[6] or '' }}"
                         placeholder="T-SHIRT / LONG SLEEVE / OUTERWEAR"
                     >
 
@@ -228,7 +403,6 @@
                     <input
                         type="text"
                         name="tags"
-                        value="{{ produto[7] or '' }}"
                         placeholder="MEMORY, SÃO PAULO, ARCHIVE"
                     >
 
@@ -245,8 +419,7 @@
                     <input
                         type="text"
                         name="imagem"
-                        value="{{ produto[8] or '' }}"
-                        placeholder="archive-object-01.png"
+                        placeholder="archive-object-04.png"
                     >
 
                 </div>
@@ -254,7 +427,7 @@
 
 
                 <button type="submit">
-                    SAVE ARCHIVE ENTRY →
+                    INDEX OBJECT →
                 </button>
 
 
@@ -279,7 +452,7 @@
         </span>
 
         <span>
-            MANAGEMENT / EDIT
+            ARCHIVE MANAGEMENT / 001
         </span>
 
         <span>
