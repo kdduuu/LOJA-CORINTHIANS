@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Management Access / Corinthians Archive Studies
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <header class="product-nav">
+
+        <a href="/">
+            ← PUBLIC ARCHIVE
+        </a>
+
+        <span>
+            CORINTHIANS ARCHIVE STUDIES
+        </span>
+
+        <span>
+            PRIVATE ACCESS
+        </span>
+
+    </header>
+
+
+    <!-- =====================================================
+         INTRO
+    ====================================================== -->
+
+    <section class="admin-intro">
+
+        <span>
+            ARCHIVE MANAGEMENT / AUTHENTICATION
+        </span>
+
+        <h1>
+            PRIVATE<br>
+            ACCESS
+        </h1>
+
+    </section>
+
+
+    <!-- =====================================================
+         LOGIN
+    ====================================================== -->
+
+    <section class="register">
+
+        <div class="section-heading">
+
+            <span>
+                ADMINISTRATIVE ACCESS
+            </span>
+
+            <span>
+                AUTH / 001
+            </span>
+
+        </div>
+
+
+        <div class="register-layout">
+
+
+            <!-- DOCUMENTATION -->
+
+            <div class="register-copy">
+
+                <span>
+                    MANAGEMENT INTERFACE
+                </span>
+
+                <h2>
+                    ARCHIVE<br>
+                    CONTROL
+                </h2>
+
+                <p>
+                    RESTRICTED INTERFACE FOR ARCHIVE
+                    REGISTRATION, EDITING AND MANAGEMENT.
+                </p>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <form
+                method="POST"
+                autocomplete="off"
+            >
+
+                <div class="field">
+
+                    <label>
+                        01 / ADMIN PASSWORD
+                    </label>
+
+                    <input
+                        type="password"
+                        name="senha"
+                        placeholder="ENTER CREDENTIAL"
+                        required
+                        autofocus
+                    >
+
+                </div>
+
+
+                {% if erro %}
+
+                <div class="field">
+
+                    <label>
+                        ACCESS STATUS
+                    </label>
+
+                    <input
+                        type="text"
+                        value="{{ erro }}"
+                        disabled
+                    >
+
+                </div>
+
+                {% endif %}
+
+
+                <button type="submit">
+                    ENTER MANAGEMENT →
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="site-footer">
+
+        <span>
+            CORINTHIANS ARCHIVE STUDIES
+        </span>
+
+        <span>
+            AUTHENTICATION
+        </span>
+
+        <span>
+            PRIVATE INTERFACE / 2026
+        </span>
+
+    </footer>
+
+
+</body>
+
+</html>

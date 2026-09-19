@@ -3,10 +3,45 @@
 # CORINTHIANS ARCHIVE STUDIES
 # =========================================================
 
-from flask import Flask, render_template, request, redirect
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    session,
+    url_for
+)
+
+from functools import wraps
+from dotenv import load_dotenv
+
 import mysql.connector
 import unicodedata
+import hmac
+import os
 import re
+
+
+# =========================================================
+# VARIÁVEIS DE AMBIENTE
+# =========================================================
+
+load_dotenv()
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+
+
+if not SECRET_KEY:
+    raise RuntimeError(
+        'SECRET_KEY não foi configurada no arquivo .env'
+    )
+
+
+if not ADMIN_PASSWORD:
+    raise RuntimeError(
+        'ADMIN_PASSWORD não foi configurada no arquivo .env'
+    )
 
 
 # =========================================================
@@ -15,18 +50,49 @@ import re
 
 app = Flask(__name__)
 
+app.secret_key = SECRET_KEY
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax'
+)
+
 
 # =========================================================
 # CONEXÃO COM O BANCO
 # =========================================================
 
 def conectar_banco():
+
     return mysql.connector.connect(
         host='localhost',
         user='root',
         password='',
         database='loja_corinthians'
     )
+
+
+# =========================================================
+# AUTENTICAÇÃO ADMINISTRATIVA
+# =========================================================
+
+def admin_required(funcao):
+
+    @wraps(funcao)
+    def wrapper(*args, **kwargs):
+
+        if not session.get('admin_authenticated'):
+
+            return redirect(
+                url_for('login')
+            )
+
+        return funcao(
+            *args,
+            **kwargs
+        )
+
+    return wrapper
 
 
 # =========================================================
@@ -47,6 +113,7 @@ ORDEM_FAMILIAS = [
 # =========================================================
 
 def extrair_familia(colecao):
+
     if not colecao:
         return 'SEM COLEÇÃO'
 
@@ -54,6 +121,7 @@ def extrair_familia(colecao):
 
 
 def gerar_slug(texto):
+
     texto = unicodedata.normalize(
         'NFKD',
         texto
@@ -76,9 +144,11 @@ def gerar_slug(texto):
 
 
 def organizar_familias(produtos):
+
     familias = {}
 
     for produto in produtos:
+
         colecao = produto[4] or 'SEM COLEÇÃO'
 
         nome_familia = extrair_familia(
@@ -86,6 +156,7 @@ def organizar_familias(produtos):
         )
 
         if nome_familia not in familias:
+
             familias[nome_familia] = {
                 'nome': nome_familia,
                 'colecao': colecao,
@@ -102,6 +173,7 @@ def organizar_familias(produtos):
     # -----------------------------------------------------
 
     for familia in familias.values():
+
         familia['produtos'].sort(
             key=lambda produto: produto[0]
         )
@@ -111,9 +183,11 @@ def organizar_familias(produtos):
     # -----------------------------------------------------
 
     def ordem(familia):
+
         nome = familia['nome']
 
         if nome in ORDEM_FAMILIAS:
+
             return (
                 ORDEM_FAMILIAS.index(nome),
                 nome
@@ -136,6 +210,7 @@ def organizar_familias(produtos):
 
 @app.route('/')
 def home():
+
     conexao = conectar_banco()
     cursor = conexao.cursor()
 
@@ -169,6 +244,7 @@ def home():
 
 @app.route('/produto/<int:id>')
 def produto(id):
+
     conexao = conectar_banco()
     cursor = conexao.cursor()
 
@@ -196,11 +272,75 @@ def produto(id):
 
 
 # =========================================================
+# LOGIN ADMINISTRATIVO
+# =========================================================
+
+@app.route(
+    '/login',
+    methods=['GET', 'POST']
+)
+def login():
+
+    if session.get('admin_authenticated'):
+
+        return redirect(
+            url_for('admin')
+        )
+
+    erro = None
+
+    if request.method == 'POST':
+
+        senha = request.form.get(
+            'senha',
+            ''
+        )
+
+        senha_correta = hmac.compare_digest(
+            senha.encode('utf-8'),
+            ADMIN_PASSWORD.encode('utf-8')
+        )
+
+        if senha_correta:
+
+            session.clear()
+
+            session['admin_authenticated'] = True
+
+            return redirect(
+                url_for('admin')
+            )
+
+        erro = 'ACCESS DENIED / INVALID CREDENTIAL'
+
+    return render_template(
+        'login.html',
+        erro=erro
+    )
+
+
+# =========================================================
+# LOGOUT ADMINISTRATIVO
+# =========================================================
+
+@app.route('/logout')
+def logout():
+
+    session.clear()
+
+    return redirect(
+        url_for('login')
+    )
+
+
+# =========================================================
 # ADMIN
 # =========================================================
 
 @app.route('/admin')
+@admin_required
 def admin():
+
     conexao = conectar_banco()
     cursor = conexao.cursor()
 
@@ -227,8 +367,13 @@ def admin():
 # CADASTRAR PEÇA
 # =========================================================
 
-@app.route('/cadastrar', methods=['POST'])
+@app.route(
+    '/cadastrar',
+    methods=['POST']
+)
+@admin_required
 def cadastrar():
+
     nome = request.form['nome']
     preco = request.form['preco']
     descricao = request.form['descricao']
@@ -305,7 +450,9 @@ def cadastrar():
     cursor.close()
     conexao.close()
 
-    return redirect('/admin')
+    return redirect(
+        url_for('admin')
+    )
 
 
 # =========================================================
@@ -316,7 +463,9 @@ def cadastrar():
     '/editar/<int:id>',
     methods=['GET', 'POST']
 )
+@admin_required
 def editar(id):
+
     conexao = conectar_banco()
     cursor = conexao.cursor()
 
@@ -325,6 +474,7 @@ def editar(id):
     # =====================================================
 
     if request.method == 'POST':
+
         nome = request.form['nome']
         preco = request.form['preco']
         descricao = request.form['descricao']
@@ -390,7 +540,9 @@ def editar(id):
         cursor.close()
         conexao.close()
 
-        return redirect('/admin')
+        return redirect(
+            url_for('admin')
+        )
 
     # =====================================================
     # GET
@@ -411,7 +563,10 @@ def editar(id):
     conexao.close()
 
     if produto is None:
-        return redirect('/admin')
+
+        return redirect(
+            url_for('admin')
+        )
 
     return render_template(
         'editar.html',
@@ -427,7 +582,9 @@ def editar(id):
     '/deletar/<int:id>',
     methods=['POST']
 )
+@admin_required
 def deletar(id):
+
     conexao = conectar_banco()
     cursor = conexao.cursor()
 
@@ -444,7 +601,9 @@ def deletar(id):
     cursor.close()
     conexao.close()
 
-    return redirect('/admin')
+    return redirect(
+        url_for('admin')
+    )
 
 
 # =========================================================
@@ -452,6 +611,7 @@ def deletar(id):
 # =========================================================
 
 if __name__ == '__main__':
+
     app.run(
         debug=True
     )

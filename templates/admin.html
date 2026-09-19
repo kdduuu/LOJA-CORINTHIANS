@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-br">
 
 <head>
@@ -40,11 +41,13 @@
         </span>
 
         <span>
-            MANAGEMENT / 001
+            MANAGEMENT /
+            <a href="{{ url_for('logout') }}">
+                LOGOUT
+            </a>
         </span>
 
     </header>
-
 
 
     <!-- =====================================================
@@ -65,13 +68,11 @@
     </section>
 
 
-
     <!-- =====================================================
          INDEXED OBJECTS
     ====================================================== -->
 
     <section class="admin-section">
-
 
         <div class="section-heading">
 
@@ -86,12 +87,9 @@
         </div>
 
 
-
         <div class="admin-list">
 
-
             {% for produto in produtos %}
-
 
             <article class="admin-row">
 
@@ -111,7 +109,6 @@
                 </div>
 
 
-
                 <!-- OBJECT -->
 
                 <div class="admin-object">
@@ -125,7 +122,6 @@
                     </span>
 
                 </div>
-
 
 
                 <!-- STUDY -->
@@ -143,7 +139,6 @@
                 </div>
 
 
-
                 <!-- CATEGORY -->
 
                 <div class="admin-object">
@@ -159,11 +154,9 @@
                 </div>
 
 
-
                 <!-- ACTIONS -->
 
                 <div class="admin-actions">
-
 
                     <a
                         href="/produto/{{ produto[0] }}"
@@ -172,11 +165,9 @@
                         VIEW
                     </a>
 
-
                     <a href="/editar/{{ produto[0] }}">
                         EDIT
                     </a>
-
 
                     <form
                         action="/deletar/{{ produto[0] }}"
@@ -193,15 +184,12 @@
 
                     </form>
 
-
                 </div>
-
 
             </article>
 
 
             {% else %}
-
 
             <article class="admin-row">
 
@@ -212,7 +200,6 @@
                     </span>
 
                 </div>
-
 
                 <div class="admin-object">
 
@@ -228,15 +215,11 @@
 
             </article>
 
-
             {% endfor %}
-
 
         </div>
 
-
     </section>
-
 
 
     <!-- =====================================================
@@ -244,7 +227,6 @@
     ====================================================== -->
 
     <section class="register">
-
 
         <div class="section-heading">
 
@@ -257,7 +239,6 @@
             </span>
 
         </div>
-
 
 
         <div class="register-layout">
@@ -286,7 +267,6 @@
             </div>
 
 
-
             <!-- FORM -->
 
             <form
@@ -311,7 +291,6 @@
                 </div>
 
 
-
                 <div class="field">
 
                     <label>
@@ -329,7 +308,6 @@
                 </div>
 
 
-
                 <div class="field">
 
                     <label>
@@ -343,7 +321,6 @@
                     ></textarea>
 
                 </div>
-
 
 
                 <div class="field">
@@ -361,7 +338,6 @@
                 </div>
 
 
-
                 <div class="field">
 
                     <label>
@@ -375,7 +351,6 @@
                     >
 
                 </div>
-
 
 
                 <div class="field">
@@ -393,7 +368,6 @@
                 </div>
 
 
-
                 <div class="field">
 
                     <label>
@@ -407,7 +381,6 @@
                     >
 
                 </div>
-
 
 
                 <div class="field">
@@ -425,20 +398,15 @@
                 </div>
 
 
-
                 <button type="submit">
                     INDEX OBJECT →
                 </button>
 
-
             </form>
-
 
         </div>
 
-
     </section>
-
 
 
     <!-- =====================================================
