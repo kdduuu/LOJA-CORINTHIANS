@@ -2,46 +2,63 @@ Como o Flask foi utilizado no projeto:
 
 1. Criação da aplicação Flask:
 - O arquivo principal é `app.py`.
-- O Flask é importado com `from flask import Flask, render_template, request, redirect`.
 - A aplicação é criada com `app = Flask(__name__)`.
+- O Flask controla as páginas, rotas e regras principais do sistema.
 
-2. Estrutura de rotas (páginas/endpoints):
-- Cada função com `@app.route(...)` define uma rota HTTP.
-- A rota `/` mostra a página inicial e lista produtos.
-- A rota `/cadastrar` recebe dados do formulário para inserir um produto no banco de dados.
-- A rota `/deletar/<int:id>` exclui um produto pelo `id`.
-- A rota `/editar/<int:id>` mostra a página de edição e também processa o envio do formulário de edição.
+2. Estrutura de rotas:
+- `/` mostra o catálogo principal.
+- `/produto/<int:id>` mostra uma peça individual.
+- `/login` realiza a autenticação administrativa.
+- `/logout` encerra a sessão.
+- `/admin` mostra o painel administrativo.
+- `/cadastrar` adiciona uma nova peça.
+- `/editar/<int:id>` edita uma peça.
+- `/deletar/<int:id>` exclui uma peça.
 
-3. Renderização de templates:
-- `render_template('index.html', produtos=produtos)` renderiza a página HTML `templates/index.html` e passa a lista de produtos para o template.
-- `render_template('editar.html', produto=produto)` renderiza o template `templates/editar.html` e passa os dados do produto para edição.
-- Isso significa que Flask liga o código Python aos arquivos HTML na pasta `templates/`.
+3. Templates Jinja:
+- Os arquivos HTML ficam na pasta `templates`.
+- O Flask envia os dados do Python para o HTML utilizando `render_template()`.
+- O Jinja permite exibir produtos, famílias e outras informações dinamicamente.
 
-4. Tratamento de formulários e métodos HTTP:
-- No Flask, `request.form` pega os dados enviados pelo formulário HTML.
-- Para cadastrar, a rota usa `methods=['POST']`, ou seja, recebe somente envios de formulário.
-- A rota de editar aceita `methods=['GET', 'POST']`: 
-  - `GET` exibe o formulário com os dados atuais do produto.
-  - `POST` atualiza o produto no banco quando o formulário é enviado.
+4. Banco de dados:
+- O projeto utiliza PostgreSQL hospedado no Supabase.
+- A conexão é feita através da biblioteca `psycopg2`.
+- As informações de conexão ficam em variáveis de ambiente e não diretamente no código.
+- A tabela principal é `produtos`.
 
-5. Redirecionamento:
-- Após cadastrar, deletar ou editar, o código usa `redirect('/')` para voltar para a página inicial.
-- Isso faz o navegador carregar novamente a lista de produtos atualizada.
+5. CRUD:
+- CREATE: cadastro de novas peças.
+- READ: listagem e visualização das peças.
+- UPDATE: edição das peças.
+- DELETE: exclusão das peças.
 
-6. Conexão com o banco de dados MySQL:
-- O projeto usa `mysql.connector` para conectar ao banco MySQL.
-- Em cada rota, ele cria uma conexão com `mysql.connector.connect(...)`, executa SQL e fecha a conexão.
-- No `home()`, ele busca todos os produtos com `SELECT * FROM produtos`.
-- No `cadastrar()`, ele insere um novo produto usando `INSERT INTO produtos (...)`.
-- No `deletar(id)`, ele remove o produto pelo `id` com `DELETE FROM produtos WHERE id = %s`.
-- No `editar(id)`, ele atualiza o produto com `UPDATE produtos SET ... WHERE id = %s`.
+6. Famílias e coleções:
+- Os produtos são organizados em famílias através do campo `colecao`.
+- A função `extrair_familia()` identifica a família principal.
+- A função `organizar_familias()` agrupa e ordena as peças.
+- `gerar_slug()` cria identificadores simplificados para os nomes das famílias.
 
-7. Execução do servidor:
-- O final do arquivo tem `if __name__ == '__main__': app.run(debug=True)`.
-- Isso inicia o servidor Flask local quando o arquivo `app.py` é executado.
+7. Área administrativa:
+- O sistema possui login administrativo.
+- A autenticação utiliza sessões do Flask.
+- As rotas de cadastro, edição e exclusão são protegidas por `@admin_required`.
+
+8. Variáveis de ambiente:
+- Informações como senha do Admin, SECRET_KEY e dados do banco ficam no `.env`.
+- O `.env` não é enviado ao GitHub.
+- No Render, essas informações ficam configuradas como Environment Variables.
+
+9. Execução:
+- Localmente, o projeto pode ser iniciado com `python app.py`.
+- Na versão publicada, o Render utiliza `gunicorn app:app`.
+- O banco PostgreSQL fica hospedado no Supabase.
+
+10. Arquitetura atual:
+Usuário → Render → Flask → Supabase → PostgreSQL
 
 Resumo:
-- O Flask serve como a camada web do projeto.
-- Ele atende URLs, renderiza HTML e recebe dados de formulários.
-- Ele conecta o código Python com o banco de dados MySQL e com os templates HTML.
-- As rotas definem as operações principais: listar, cadastrar, editar e excluir produtos.
+- O Flask funciona como o núcleo da aplicação.
+- Ele controla as rotas, templates, autenticação e CRUD.
+- O projeto utiliza PostgreSQL no Supabase e está hospedado no Render.
+- O site está disponível em:
+https://corinthians-archive-studies-v2.onrender.com
