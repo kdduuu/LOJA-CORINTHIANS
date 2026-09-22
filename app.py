@@ -15,7 +15,7 @@ from flask import (
 from functools import wraps
 from dotenv import load_dotenv
 
-import mysql.connector
+import psycopg2
 import unicodedata
 import hmac
 import os
@@ -30,6 +30,12 @@ load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+
+DB_HOST = os.getenv('DB_HOST')
+DB_PORT = os.getenv('DB_PORT')
+DB_NAME = os.getenv('DB_NAME')
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
 
 
 if not SECRET_KEY:
@@ -64,11 +70,13 @@ app.config.update(
 
 def conectar_banco():
 
-    return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='',
-        database='loja_corinthians'
+    return psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        sslmode='require'
     )
 
 
